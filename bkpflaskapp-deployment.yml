@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flaskapi-image-deployment
+  name: flaskapi-deployment
   labels:
-    app: flaskapiimage
+    app: flaskapi
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: flaskapiimage
+      app: flaskapi
   template:
     metadata:
       labels:
-        app: flaskapiimage
+        app: flaskapi
     spec:
       containers:
         - name: flaskapi
-          image: alian2020/flaskapiimage
+          image: alian2020/flask-kubernetes
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
@@ -34,12 +34,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-image-service
+  name: flask-service
 spec:
   ports:
   - port: 5000
     protocol: TCP
     targetPort: 5000
   selector:
-    app: flaskapiimage
+    app: flaskapi
   type: NodePort

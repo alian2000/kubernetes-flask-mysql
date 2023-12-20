@@ -1,4 +1,4 @@
-"""Code for a flask API to Create, Read, Update, Delete students"""
+"""Code for a flask API to Create, Read, Update, Delete users"""
 import os
 from flask import jsonify, request, Flask
 from flaskext.mysql import MySQL
@@ -19,21 +19,20 @@ mysql.init_app(app)
 @app.route("/")
 def index():
     """Function to test the functionality of the API"""
-    return "Hello, STUDENT world!"
+    return "Hello, world!"
 
 
 @app.route("/create", methods=["POST"])
-def add_student():
-    """Function to create a student to the MySQL database"""
+def add_user():
+    """Function to create a user to the MySQL database"""
     json = request.json
-    student_name = json["student_name"]
-    student_email = json["student_email"]
-    student_pic = json["student_pic"]
-    student_pwd = json["student_pwd"]
-    if student_name and student_email and student_pic and student_pwd and request.method == "POST":
-        sql = "INSERT INTO students(student_name, student_email, student_pic, student_password) " \
-              "VALUES(%s, %s,%s ,%s)"
-        data = (student_name, student_email,student_pic, student_pwd)
+    name = json["name"]
+    email = json["email"]
+    pwd = json["pwd"]
+    if name and email and pwd and request.method == "POST":
+        sql = "INSERT INTO users(user_name, user_email, user_password) " \
+              "VALUES(%s, %s, %s)"
+        data = (name, email, pwd)
         try:
             conn = mysql.connect()
             cursor = conn.cursor()
@@ -41,22 +40,22 @@ def add_student():
             conn.commit()
             cursor.close()
             conn.close()
-            resp = jsonify("Student created successfully!")
+            resp = jsonify("User created successfully!")
             resp.status_code = 200
             return resp
         except Exception as exception:
             return jsonify(str(exception))
     else:
-        return jsonify("Please provide name, email,pic and pwd")
+        return jsonify("Please provide name, email and pwd")
 
 
-@app.route("/students", methods=["GET"])
-def students():
-    """Function to retrieve all students from the MySQL database"""
+@app.route("/users", methods=["GET"])
+def users():
+    """Function to retrieve all users from the MySQL database"""
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM students")
+        cursor.execute("SELECT * FROM users")
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -67,13 +66,13 @@ def students():
         return jsonify(str(exception))
 
 
-@app.route("/student/<int:student_id>", methods=["GET"])
-def user(student_id):
-    """Function to get information of a specific student in the MSQL database"""
+@app.route("/user/<int:user_id>", methods=["GET"])
+def user(user_id):
+    """Function to get information of a specific user in the MSQL database"""
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM students WHERE student_id=%s", student_id)
+        cursor.execute("SELECT * FROM users WHERE user_id=%s", user_id)
         row = cursor.fetchone()
         cursor.close()
         conn.close()
@@ -85,19 +84,18 @@ def user(student_id):
 
 
 @app.route("/update", methods=["POST"])
-def update_student():
-    """Function to update a student in the MYSQL database"""
+def update_user():
+    """Function to update a user in the MYSQL database"""
     json = request.json
-    student_name = json["student_name"]
-    student_email = json["student_email"]
-    student_pic = json["student_pic"]
-    student_pwd = json["student_pwd"]
-    student_id = json["student_id"]
-    if student_name and student_email and student_pic and student_pwd and student_id and request.method == "POST":
+    name = json["name"]
+    email = json["email"]
+    pwd = json["pwd"]
+    user_id = json["user_id"]
+    if name and email and pwd and user_id and request.method == "POST":
         # save edits
-        sql = "UPDATE students SET student_name=%s, student_email=%s, student_pic=%s " \
-              "student_password=%s WHERE student_id=%s"
-        data = (student_name, student_email,student_pic, student_pwd, student_user_id)
+        sql = "UPDATE users SET user_name=%s, user_email=%s, " \
+              "user_password=%s WHERE user_id=%s"
+        data = (name, email, pwd, user_id)
         try:
             conn = mysql.connect()
             cursor = conn.cursor()
@@ -114,17 +112,17 @@ def update_student():
         return jsonify("Please provide id, name, email and pwd")
 
 
-@app.route("/delete/<int:student_id>")
-def delete_student(student_id):
-    """Function to delete a student from the MySQL database"""
+@app.route("/delete/<int:user_id>")
+def delete_user(user_id):
+    """Function to delete a user from the MySQL database"""
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM students WHERE student_id=%s", student_id)
+        cursor.execute("DELETE FROM users WHERE user_id=%s", user_id)
         conn.commit()
         cursor.close()
         conn.close()
-        resp = jsonify("Userstudent deleted successfully!")
+        resp = jsonify("User deleted successfully!")
         resp.status_code = 200
         return resp
     except Exception as exception:
@@ -133,4 +131,3 @@ def delete_student(student_id):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
