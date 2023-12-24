@@ -8,6 +8,14 @@ app = Flask(__name__)
 mysql = MySQL()
 
 # MySQL configurations using app.config subclass
+# i named it application and not app to show this is just any name in another script
+#__name_ is just the name of the python script
+"""Probably the most interesting way to load configurations is from an
+    environment variable pointing to a file::
+ app.config.from_envvar('YOURAPPLICATION_SETTINGS from environment variable on a POD')
+ class Config(dict):
+ 
+ """
 app.config["MYSQL_DATABASE_USER"] = "root"
 app.config["MYSQL_DATABASE_PASSWORD"] = os.getenv("db_root_password")
 app.config["MYSQL_DATABASE_DB"] = os.getenv("db_name")
